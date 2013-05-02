@@ -37,40 +37,6 @@ ARGV.options { |opt|
 (print ARGV.options; exit) unless ARGV[0]
 
 module Utils
-  class Debug
-    # log to array of filehandles (stdout/logfile)
-    def initialize(fhs=[$stderr])
-      @out = fhs
-    end
-    # print always
-    def print(*msg)
-      @out.each { |o| o.puts(msg.join(' ')) }
-    end
-    # print if verbose
-    def note(*msg)
-      print(msg) if $verbose
-    end
-    # print unless quiet
-    def log(*msg)
-      print(msg) unless $quiet
-    end
-    # format
-    def printf(*msg)
-      @out.each { |o| o.printf(*msg) }
-    end
-    def logf(*msg) 
-      printf(*msg) unless $quiet
-    end
-    # print backtrace
-    def error(error,*msg)
-      @out.each { |o| 
-        o.puts(msg.join(' ')) unless msg.empty?
-        o.puts("  "+error.to_s)
-        error.backtrace.each { |b| o.puts("\t"+b.to_s) }
-      }
-    end
-  end
-
   module WGet
     def wget(url,filename=nil)
       if filename.nil?
@@ -93,7 +59,7 @@ class Downloader
   def update(url)
     a = url.split('/')
     filename = a[-1]
-    $debug.log("### downloading file #{filename}") if OPTIONS[:verbose]
+    STDERR.puts("### downloading file #{filename}") if OPTIONS[:verbose]
     res = wget(url,"#{@dir}/#{filename}") unless OPTIONS[:testonly]
   end
 end
@@ -115,7 +81,7 @@ class RSSParser
         notify_observers(item.enclosure.url)
       } 
     rescue
-      $debug.error($!,'### parsing rss:')
+    STDERR.puts($!,'### parsing rss:')
     end
   end
 
@@ -134,7 +100,6 @@ class Action
 
 end
 
-$debug = Utils::Debug.new
 $action = Action.new(ARGV[0])
 $action.start
 
