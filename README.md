@@ -6,7 +6,7 @@ Requires: wget
 
 ## Export RSS
 
-[[images/How to export.png]]
+![how to export rss](https://raw.github.com/wiki/katastrophie/soup-io-backup/img/How%20to%20export.png)
 
 ## Download
 
